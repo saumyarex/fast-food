@@ -1,5 +1,5 @@
 import { CreateUserParams, SignInParams } from "@/type";
-import { Account, Avatars, Client, Databases, ID, Query, TablesDB } from "react-native-appwrite";
+import { Account, Avatars, Client, ID, Query, TablesDB } from "react-native-appwrite";
 
 export const appwriteConfig = {
     endpoint : process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
@@ -12,24 +12,24 @@ export const appwriteConfig = {
 
 
 const client = new Client()
-    .setEndpoint(appwriteConfig.endpoint) // Your API Endpoint
-    .setProject(appwriteConfig.projectID); // Your project ID )
+    .setEndpoint(appwriteConfig.endpoint) 
+    .setProject(appwriteConfig.projectID); 
 
 const account = new Account(client);
-const database = new Databases(client);
 const tablesDB = new TablesDB(client);
 const avatar = new Avatars(client);
 
-// const result = await account.create({
-//     userId: '<USER_ID>',
-//     email: 'email@example.com',
-//     password: '',
-//     name: '<NAME>' // optional
-// });
 
 export const createAccount = async({name, email, password} : CreateUserParams) => {
 
     try {
+
+        console.log("name is:", name)
+        const avatarURL = avatar.getInitials({name:name}); 
+
+        console.log("Avatar url: ", avatarURL)
+        if(!avatarURL) throw new Error("Account creation failed. Please try again!");
+
         const newAccount = await account.create({
             userId: ID.unique(),
             email: email,
@@ -40,7 +40,6 @@ export const createAccount = async({name, email, password} : CreateUserParams) =
         if(!newAccount) throw new Error("Account creation failed. Please try again!");
 
         await signIn({email,password});
-        const avatarURL = avatar.getInitials({name}); 
 
         return await tablesDB.createRow({
             databaseId: appwriteConfig.databaseID,
@@ -49,7 +48,6 @@ export const createAccount = async({name, email, password} : CreateUserParams) =
             data: {
                 name: name,
                 email: email,
-                avatar: avatarURL,
                 accountID: newAccount.$id
             },
         });
