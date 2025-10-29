@@ -1,9 +1,9 @@
+import useAuthStore from "@/store/auth.store";
+import * as Sentry from "@sentry/react-native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import "./global.css";
-import * as Sentry from "@sentry/react-native";
-import useAuthStore from "@/store/auth.store";
 
 Sentry.init({
   dsn: "https://7e3871f5042f9fd3344cff907fed46b8@o4510257220485120.ingest.us.sentry.io/4510257224155136",
@@ -49,7 +49,7 @@ export default Sentry.wrap(function RootLayout() {
     fetchAuthenticatedUser();
   }, [fetchAuthenticatedUser]);
 
-  if (!fontsLoaded || !isLoading) return null;
+  if (!fontsLoaded || isLoading) return null;
 
   return <Stack screenOptions={{ headerShown: false }} />;
 });
