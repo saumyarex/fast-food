@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/appwrite';
 import { User } from '@/type';
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 type AuthState = {
     isAuthenticated : boolean;
@@ -35,11 +35,7 @@ const useAuthStore = create<AuthState>((set) => ({
             }
         } catch (error) {
             set({isAuthenticated: false, user: null});
-            if(error instanceof Error){
-                throw new Error(error.message)
-            }else{
-                throw new Error("Something went wrong.")
-            }
+            console.log("User fetching error:", error)
         } finally{
             set({isLoading:false})
         }
